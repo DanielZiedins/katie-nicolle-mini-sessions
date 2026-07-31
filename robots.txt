@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://katie-nicolle-mini-sessions.vercel.app/sitemap.xml
