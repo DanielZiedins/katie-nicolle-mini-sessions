@@ -100,7 +100,7 @@ const sessionList = document.querySelector("[data-session-list]");
 function sessionCard(session) {
   const slides = session.photos.map((photo, index) => `
     <button class="gallery-slide${index === 0 ? " is-active" : ""}" type="button" data-slide="${index}" aria-label="Enlarge photo ${index + 1} of ${session.photos.length}">
-      <img src="${photo}" srcset="${photo.replace("/drive/", "/drive-sm/")} 900w, ${photo} 1200w" sizes="(max-width: 760px) calc(100vw - 32px), 58vw" alt="${session.alts[index]}" width="1200" height="1800" decoding="async" ${index > 0 ? 'loading="lazy"' : ""} />
+      <img src="${photo}" srcset="${photo.replace("/drive/", "/drive-sm/")} 600w, ${photo} 1024w" sizes="(max-width: 760px) calc(100vw - 32px), 58vw" alt="${session.alts[index]}" width="1200" height="1800" decoding="async" ${index > 0 ? 'loading="lazy"' : ""} />
     </button>`).join("");
 
   return `
@@ -152,7 +152,7 @@ setTimeout(alignSessionHash, 250);
 window.addEventListener("hashchange", () => requestAnimationFrame(alignSessionHash));
 
 document.querySelectorAll('img[src^="/images/drive/"]').forEach(image => {
-  if (!image.srcset) image.srcset = `${image.getAttribute("src").replace("/drive/", "/drive-sm/")} 900w, ${image.getAttribute("src")} 1200w`;
+  if (!image.srcset) image.srcset = `${image.getAttribute("src").replace("/drive/", "/drive-sm/")} 600w, ${image.getAttribute("src")} 1024w`;
   if (!image.sizes) image.sizes = "(max-width: 760px) 70vw, 32vw";
   image.decoding = "async";
   if (!image.width) image.width = 1200;
