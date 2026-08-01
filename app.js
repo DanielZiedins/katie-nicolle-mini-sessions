@@ -1,6 +1,6 @@
 const imageRange = (folder, count) => Array.from(
   { length: count },
-  (_, index) => `/images/drive/${folder}/${String(index + 1).padStart(2, "0")}.jpg`
+  (_, index) => `/images/drive/${folder}/${String(index + 1).padStart(3, "0")}.jpg`
 );
 
 const GALLERY_INTERVAL = 1500;
@@ -9,7 +9,7 @@ const sessions = [
   {
     id: "flower-farm",
     folder: "flower",
-    count: 12,
+    count: 82,
     season: "summer",
     index: "01",
     name: "Flower Farm",
@@ -25,7 +25,7 @@ const sessions = [
   {
     id: "tree-farm",
     folder: "tree",
-    count: 12,
+    count: 65,
     season: "holiday",
     index: "02",
     name: "Tree Farm",
@@ -41,7 +41,7 @@ const sessions = [
   {
     id: "beamers-falls",
     folder: "beamers",
-    count: 23,
+    count: 48,
     season: "autumn",
     index: "03",
     name: "Beamers Falls",
@@ -57,7 +57,7 @@ const sessions = [
   {
     id: "dundurn-castle",
     folder: "dundurn",
-    count: 12,
+    count: 42,
     season: "autumn",
     index: "04",
     name: "Dundurn Castle",
@@ -73,7 +73,7 @@ const sessions = [
   {
     id: "village-co",
     folder: "village",
-    count: 10,
+    count: 35,
     season: "holiday",
     index: "05",
     name: "Village Co",
@@ -98,16 +98,22 @@ const sessions = [
 const sessionList = document.querySelector("[data-session-list]");
 
 function sessionCard(session) {
-  const slides = session.photos.map((photo, index) => `
+  const slides = session.photos.map((photo, index) => {
+    const smallPhoto = photo.replace("/drive/", "/drive-sm/");
+    const sourceAttributes = index === 0
+      ? `src="${photo}" srcset="${smallPhoto} 600w, ${photo} 1024w"`
+      : `data-src="${photo}" data-srcset="${smallPhoto} 600w, ${photo} 1024w"`;
+    return `
     <button class="gallery-slide${index === 0 ? " is-active" : ""}" type="button" data-slide="${index}" aria-label="Enlarge photo ${index + 1} of ${session.photos.length}">
-      <img src="${photo}" srcset="${photo.replace("/drive/", "/drive-sm/")} 600w, ${photo} 1024w" sizes="(max-width: 760px) calc(100vw - 32px), 58vw" alt="${session.alts[index]}" width="1200" height="1800" decoding="async" ${index > 0 ? 'loading="lazy"' : ""} />
-    </button>`).join("");
+      <img ${sourceAttributes} sizes="(max-width: 760px) calc(100vw - 32px), 58vw" alt="${session.alts[index]}" width="1200" height="1800" decoding="async" loading="lazy" />
+    </button>`;
+  }).join("");
 
   return `
     <article class="session-card reveal" id="${session.id}" data-season="${session.season}" data-session="${session.id}">
       <div class="session-gallery" aria-label="${session.name} photo gallery">
         <div class="gallery-slides">${slides}</div>
-        <div class="gallery-topline"><span>${session.mood}</span><span>${session.index} / 05</span></div>
+        <div class="gallery-topline"><span>${session.mood}</span><span>All ${session.photos.length} frames · ${session.index} / 05</span></div>
         <button class="gallery-arrow gallery-prev" type="button" data-direction="-1" aria-label="Previous ${session.name} photo">←</button>
         <button class="gallery-arrow gallery-next" type="button" data-direction="1" aria-label="Next ${session.name} photo">→</button>
         <div class="gallery-status">
@@ -175,6 +181,15 @@ document.querySelectorAll("[data-session]").forEach((card, cardIndex) => {
   let touchStartX = 0;
   let swiped = false;
 
+  const hydrate = index => {
+    const image = slides[(index + slides.length) % slides.length].querySelector("img");
+    if (!image.dataset.src) return;
+    image.src = image.dataset.src;
+    image.srcset = image.dataset.srcset;
+    delete image.dataset.src;
+    delete image.dataset.srcset;
+  };
+
   const animateProgress = () => {
     progress.style.animation = "none";
     progress.offsetHeight;
@@ -183,6 +198,8 @@ document.querySelectorAll("[data-session]").forEach((card, cardIndex) => {
 
   const show = (next, userInitiated = false) => {
     current = (next + slides.length) % slides.length;
+    hydrate(current);
+    hydrate(current + 1);
     slides.forEach((slide, index) => {
       const active = index === current;
       slide.classList.toggle("is-active", active);
@@ -190,8 +207,6 @@ document.querySelectorAll("[data-session]").forEach((card, cardIndex) => {
       slide.tabIndex = active ? 0 : -1;
     });
     counter.textContent = String(current + 1).padStart(2, "0");
-    const preloadIndex = (current + 1) % slides.length;
-    slides[preloadIndex].querySelector("img").loading = "eager";
     animateProgress();
     if (userInitiated && !card.matches(":hover") && !card.contains(document.activeElement)) restart();
   };
@@ -235,6 +250,11 @@ document.querySelectorAll("[data-session]").forEach((card, cardIndex) => {
     swiped = true;
     show(current + (distance < 0 ? 1 : -1), true);
   }, { passive: true });
+  gallery.addEventListener("keydown", event => {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    event.preventDefault();
+    show(current + (event.key === "ArrowRight" ? 1 : -1), true);
+  });
 
   card.addEventListener("mouseenter", stop);
   card.addEventListener("mouseleave", start);
@@ -249,6 +269,7 @@ document.querySelectorAll("[data-session]").forEach((card, cardIndex) => {
     card,
     slides,
     show,
+    hydrate,
     start,
     stop,
     setNearViewport: value => {
@@ -356,6 +377,7 @@ let lastTrigger;
 function renderLightbox(index) {
   if (!activeLightboxGallery) return;
   activeLightboxIndex = (index + activeLightboxGallery.slides.length) % activeLightboxGallery.slides.length;
+  activeLightboxGallery.hydrate(activeLightboxIndex);
   const slide = activeLightboxGallery.slides[activeLightboxIndex];
   const image = slide.querySelector("img");
   lightboxImage.src = image.src;

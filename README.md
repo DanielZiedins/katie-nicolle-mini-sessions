@@ -14,11 +14,11 @@ Then open `http://localhost:4173`.
 
 ## Updating a gallery
 
-Session content lives in the `sessions` array at the top of `app.js`. Each session points to a named folder and image count; `imageRange()` builds the gallery automatically. Add optimized photographs using the existing two-digit naming pattern (`01.jpg`, `02.jpg`, and so on), then update that session's `count`.
+Session content lives in the `sessions` array at the top of `app.js`. Each session points to a named folder and image count; `imageRange()` builds the gallery automatically. Add optimized photographs using the existing three-digit naming pattern (`001.jpg`, `002.jpg`, and so on), then update that session's `count`.
 
-The page currently uses a curated, web-optimized collection of 77 original Katie Nicolle photographs from the supplied Google Drive: Flower Farm, Tree Farm, Beamers Falls, Dundurn Castle, Village Co Studio and Hamilton Beach. The source files remain untouched. No AI-generated imagery is included.
+Every photograph in the five supplied mini-session folders is included: 82 Flower Farm, 65 Tree Farm, 48 Beamers Falls, 42 Dundurn Castle and 35 Village Co Studio images, for 272 bookable-session frames total. Eight supporting Hamilton Beach photographs are used elsewhere in the editorial layout. The Drive source files remain untouched and no AI-generated imagery is included.
 
-Each session gallery auto-advances every 1.5 seconds, supports pause/play, swipe, keyboard-aware controls and an enlarged lightbox with next/previous navigation. Autoplay runs only near the visible viewport to keep the richer galleries efficient, and motion is disabled when a visitor requests reduced motion.
+Each session gallery auto-advances every 1.5 seconds, supports pause/play, swipe, arrow-key controls and an enlarged lightbox with next/previous navigation. Progressive image hydration loads only the current and next frames, autoplay runs only near the visible viewport, and motion is disabled when a visitor requests reduced motion.
 
 The visual session compass, season filters, shareable deep links and context-aware booking concierge help visitors compare settings and reach the correct official Pixieset checkout quickly. Responsive 600px-wide image variants keep mobile delivery lighter while preserving the larger originals for high-density and desktop displays.
 

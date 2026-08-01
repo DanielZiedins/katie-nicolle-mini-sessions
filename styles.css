@@ -151,10 +151,13 @@ figure, p, h1, h2, h3, dl, dd, blockquote { margin: 0; }
 .session-gallery { position: relative; min-height: 670px; overflow: hidden; background: #ddd; touch-action: pan-y; }
 .gallery-slides, .gallery-slide { position: absolute; inset: 0; }
 .gallery-slide { width: 100%; padding: 0; border: 0; opacity: 0; visibility: hidden; cursor: zoom-in; transition: opacity .52s ease, visibility .52s; background: transparent; }
-.gallery-slide img { transform: scale(1.025); transition: transform 2.35s cubic-bezier(.15,.45,.25,1); }
+.gallery-slide img { opacity: 1; transform: scale(1.025); transition: transform 2.35s cubic-bezier(.15,.45,.25,1), opacity .35s ease; }
+.gallery-slide img:not([src]) { opacity: 0; }
 .gallery-slide.is-active { opacity: 1; visibility: visible; z-index: 1; }
 .gallery-slide.is-active img { transform: scale(1.075); }
 .gallery-topline { position: absolute; z-index: 3; top: 25px; left: 27px; right: 27px; display: flex; justify-content: space-between; color: white; text-shadow: 0 1px 12px rgba(0,0,0,.3); font-size: 8px; text-transform: uppercase; letter-spacing: .24em; }
+.gallery-topline span:first-child { max-width: 52%; }
+.gallery-topline span:last-child { white-space: nowrap; text-align: right; }
 .gallery-arrow { position: absolute; z-index: 4; top: 50%; width: 42px; height: 42px; margin-top: -21px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.65); border-radius: 50%; color: white; background: rgba(40,40,36,.15); backdrop-filter: blur(5px); cursor: pointer; opacity: 0; transition: opacity .25s, background .25s; }
 .session-gallery:hover .gallery-arrow, .gallery-arrow:focus-visible { opacity: 1; }
 .gallery-arrow:hover { background: rgba(40,40,36,.45); }
