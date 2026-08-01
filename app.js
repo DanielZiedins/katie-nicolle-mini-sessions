@@ -3,11 +3,13 @@ const imageRange = (folder, count) => Array.from(
   (_, index) => `/images/drive/${folder}/${String(index + 1).padStart(2, "0")}.jpg`
 );
 
+const GALLERY_INTERVAL = 1500;
+
 const sessions = [
   {
     id: "flower-farm",
     folder: "flower",
-    count: 9,
+    count: 12,
     season: "summer",
     index: "01",
     name: "Flower Farm",
@@ -23,7 +25,7 @@ const sessions = [
   {
     id: "tree-farm",
     folder: "tree",
-    count: 9,
+    count: 12,
     season: "holiday",
     index: "02",
     name: "Tree Farm",
@@ -37,25 +39,25 @@ const sessions = [
     url: "https://katienicollephotography.pixieset.com/booking/tree-farm-minis"
   },
   {
-    id: "princess-point",
-    folder: "princess",
-    count: 8,
+    id: "beamers-falls",
+    folder: "beamers",
+    count: 23,
     season: "autumn",
     index: "03",
-    name: "Princess Point",
+    name: "Beamers Falls",
     date: "October 24",
-    location: "Princess Point · Hamilton",
-    mood: "Fields, forest & water",
-    description: "An easy, nature-filled session with layers of meadow, forest and shoreline in one beautiful place.",
+    location: "Beamers Falls · Grimsby",
+    mood: "Golden fields & forest paths",
+    description: "A luminous fall setting with a wide-open field, a pathway into the forest and layers of colourful leaves.",
     duration: "30 minutes",
     imagesIncluded: "30 images",
     price: "$385 + HST",
-    url: "https://katienicollephotography.pixieset.com/booking/princess-point"
+    url: "https://katienicollephotography.pixieset.com/booking/beamers-falls"
   },
   {
     id: "dundurn-castle",
     folder: "dundurn",
-    count: 9,
+    count: 12,
     season: "autumn",
     index: "04",
     name: "Dundurn Castle",
@@ -109,7 +111,7 @@ function sessionCard(session) {
         <button class="gallery-arrow gallery-prev" type="button" data-direction="-1" aria-label="Previous ${session.name} photo">←</button>
         <button class="gallery-arrow gallery-next" type="button" data-direction="1" aria-label="Next ${session.name} photo">→</button>
         <div class="gallery-status">
-          <span class="gallery-count" aria-live="polite"><strong>01</strong> / ${String(session.photos.length).padStart(2, "0")}</span>
+          <span class="gallery-count"><strong>01</strong> / ${String(session.photos.length).padStart(2, "0")}</span>
           <button class="gallery-pause" type="button" aria-label="Pause ${session.name} gallery" aria-pressed="false"><i></i><i></i></button>
         </div>
         <div class="gallery-progress" aria-hidden="true"><i></i></div>
@@ -138,6 +140,17 @@ function sessionCard(session) {
 
 sessionList.innerHTML = sessions.map(sessionCard).join("");
 
+function alignSessionHash() {
+  if (!window.location.hash) return;
+  const target = document.getElementById(decodeURIComponent(window.location.hash.slice(1)));
+  if (target?.matches("[data-session]")) target.scrollIntoView({ block: "start", behavior: "instant" });
+}
+
+requestAnimationFrame(alignSessionHash);
+window.addEventListener("load", alignSessionHash, { once: true });
+setTimeout(alignSessionHash, 250);
+window.addEventListener("hashchange", () => requestAnimationFrame(alignSessionHash));
+
 document.querySelectorAll('img[src^="/images/drive/"]').forEach(image => {
   if (!image.srcset) image.srcset = `${image.getAttribute("src").replace("/drive/", "/drive-sm/")} 900w, ${image.getAttribute("src")} 1200w`;
   if (!image.sizes) image.sizes = "(max-width: 760px) 70vw, 32vw";
@@ -158,13 +171,14 @@ document.querySelectorAll("[data-session]").forEach((card, cardIndex) => {
   let current = 0;
   let timer;
   let paused = false;
+  let isNearViewport = false;
   let touchStartX = 0;
   let swiped = false;
 
   const animateProgress = () => {
     progress.style.animation = "none";
     progress.offsetHeight;
-    if (!prefersReducedMotion && !paused) progress.style.animation = "galleryTimer 4.8s linear forwards";
+    if (!prefersReducedMotion && !paused && isNearViewport) progress.style.animation = `galleryTimer ${GALLERY_INTERVAL}ms linear forwards`;
   };
 
   const show = (next, userInitiated = false) => {
@@ -188,9 +202,9 @@ document.querySelectorAll("[data-session]").forEach((card, cardIndex) => {
   };
 
   const start = () => {
-    if (prefersReducedMotion || paused) return;
+    if (prefersReducedMotion || paused || !isNearViewport || card.hidden) return;
     clearInterval(timer);
-    timer = setInterval(() => show(current + 1), 4800);
+    timer = setInterval(() => show(current + 1), GALLERY_INTERVAL);
     animateProgress();
   };
 
@@ -230,10 +244,29 @@ document.querySelectorAll("[data-session]").forEach((card, cardIndex) => {
   });
 
   show(0);
-  start();
   if (cardIndex) setTimeout(restart, cardIndex * 540);
-  galleries.push({ card, slides, show, start, stop, getCurrent: () => current, wasSwiped: () => swiped });
+  galleries.push({
+    card,
+    slides,
+    show,
+    start,
+    stop,
+    setNearViewport: value => {
+      isNearViewport = value;
+      if (value) start(); else stop();
+    },
+    getCurrent: () => current,
+    wasSwiped: () => swiped
+  });
 });
+
+const galleryAutoplayObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    const gallery = galleries.find(item => item.card === entry.target);
+    gallery?.setNearViewport(entry.isIntersecting);
+  });
+}, { rootMargin: "35% 0px", threshold: 0.01 });
+galleries.forEach(({ card }) => galleryAutoplayObserver.observe(card));
 
 const filterButtons = [...document.querySelectorAll("[data-filter]")];
 filterButtons.forEach(button => {
