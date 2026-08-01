@@ -25,7 +25,7 @@ const sessions = [
   {
     id: "tree-farm",
     folder: "tree",
-    count: 65,
+    count: 43,
     season: "holiday",
     index: "02",
     name: "Tree Farm",
@@ -113,7 +113,7 @@ function sessionCard(session) {
     <article class="session-card reveal" id="${session.id}" data-season="${session.season}" data-session="${session.id}">
       <div class="session-gallery" aria-label="${session.name} photo gallery">
         <div class="gallery-slides">${slides}</div>
-        <div class="gallery-topline"><span>${session.mood}</span><span>All ${session.photos.length} frames · ${session.index} / 05</span></div>
+        <div class="gallery-topline"><span>${session.mood}</span><span><i>Complete </i>${session.photos.length}<i>-frame preview</i> · ${session.index} / 05</span></div>
         <button class="gallery-arrow gallery-prev" type="button" data-direction="-1" aria-label="Previous ${session.name} photo">←</button>
         <button class="gallery-arrow gallery-next" type="button" data-direction="1" aria-label="Next ${session.name} photo">→</button>
         <div class="gallery-status">
@@ -217,7 +217,7 @@ document.querySelectorAll("[data-session]").forEach((card, cardIndex) => {
   };
 
   const start = () => {
-    if (prefersReducedMotion || paused || !isNearViewport || card.hidden) return;
+    if (prefersReducedMotion || paused || document.hidden || !isNearViewport || card.hidden) return;
     clearInterval(timer);
     timer = setInterval(() => show(current + 1), GALLERY_INTERVAL);
     animateProgress();
@@ -251,9 +251,11 @@ document.querySelectorAll("[data-session]").forEach((card, cardIndex) => {
     show(current + (distance < 0 ? 1 : -1), true);
   }, { passive: true });
   gallery.addEventListener("keydown", event => {
-    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
     event.preventDefault();
-    show(current + (event.key === "ArrowRight" ? 1 : -1), true);
+    if (event.key === "Home") show(0, true);
+    else if (event.key === "End") show(slides.length - 1, true);
+    else show(current + (event.key === "ArrowRight" ? 1 : -1), true);
   });
 
   card.addEventListener("mouseenter", stop);
@@ -288,6 +290,10 @@ const galleryAutoplayObserver = new IntersectionObserver(entries => {
   });
 }, { rootMargin: "35% 0px", threshold: 0.01 });
 galleries.forEach(({ card }) => galleryAutoplayObserver.observe(card));
+
+document.addEventListener("visibilitychange", () => {
+  galleries.forEach(gallery => document.hidden ? gallery.stop() : gallery.start());
+});
 
 const filterButtons = [...document.querySelectorAll("[data-filter]")];
 filterButtons.forEach(button => {
@@ -420,6 +426,8 @@ document.addEventListener("keydown", event => {
   if (event.key === "Escape") closeLightbox();
   if (event.key === "ArrowLeft") renderLightbox(activeLightboxIndex - 1);
   if (event.key === "ArrowRight") renderLightbox(activeLightboxIndex + 1);
+  if (event.key === "Home") renderLightbox(0);
+  if (event.key === "End") renderLightbox(activeLightboxGallery.slides.length - 1);
 });
 
 const menuToggle = document.querySelector(".menu-toggle");
