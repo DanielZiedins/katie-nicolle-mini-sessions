@@ -25,6 +25,7 @@ const sessions = [
   {
     id: "tree-farm",
     folder: "tree",
+    assetFolder: "tree-current-20260801-r2",
     count: 43,
     season: "holiday",
     index: "02",
@@ -88,7 +89,7 @@ const sessions = [
   }
 ].map(session => ({
   ...session,
-  photos: imageRange(session.folder, session.count),
+  photos: imageRange(session.assetFolder || session.folder, session.count),
   alts: Array.from(
     { length: session.count },
     (_, index) => `${session.name} mini session gallery — photograph ${index + 1} of ${session.count}`
@@ -104,7 +105,7 @@ function sessionCard(session) {
       ? `src="${photo}" srcset="${smallPhoto} 600w, ${photo} 1024w"`
       : `data-src="${photo}" data-srcset="${smallPhoto} 600w, ${photo} 1024w"`;
     return `
-    <button class="gallery-slide${index === 0 ? " is-active" : ""}" type="button" data-slide="${index}" aria-label="Enlarge photo ${index + 1} of ${session.photos.length}">
+    <button class="gallery-slide${index === 0 ? " is-active" : ""}" type="button" data-slide="${index}" aria-label="Enlarge photo ${index + 1} of ${session.photos.length}" aria-keyshortcuts="ArrowLeft ArrowRight Home End">
       <img ${sourceAttributes} sizes="(max-width: 760px) calc(100vw - 32px), 58vw" alt="${session.alts[index]}" width="1200" height="1800" decoding="async" loading="lazy" />
     </button>`;
   }).join("");

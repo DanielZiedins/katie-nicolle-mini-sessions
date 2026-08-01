@@ -18,6 +18,8 @@ Session content lives in the `sessions` array at the top of `app.js`. Each sessi
 
 Every photograph in the five supplied mini-session folders is included: 82 Flower Farm, 43 Tree Farm, 48 Beamers Falls, 42 Dundurn Castle and 35 Village Co Studio images, for 250 bookable-session frames total. Eight supporting Hamilton Beach photographs are used elsewhere in the editorial layout. The Drive source files remain untouched and no AI-generated imagery is included.
 
+Tree Farm uses a revision-specific asset directory. When that Drive folder changes, publish a new asset directory instead of reusing the old URLs; image responses are intentionally cached as immutable for performance.
+
 Each session gallery auto-advances every 1.5 seconds, supports pause/play, swipe, arrow-key controls and an enlarged lightbox with next/previous navigation. Progressive image hydration loads only the current and next frames, autoplay runs only near the visible viewport, and motion is disabled when a visitor requests reduced motion.
 
 The visual session compass, season filters, shareable deep links and context-aware booking concierge help visitors compare settings and reach the correct official Pixieset checkout quickly. Responsive 600px-wide image variants keep mobile delivery lighter while preserving the larger originals for high-density and desktop displays.
