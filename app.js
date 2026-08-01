@@ -23,12 +23,29 @@ const sessions = [
     url: "https://katienicollephotography.pixieset.com/booking/flower-farm-minis"
   },
   {
+    id: "hamilton-beach",
+    folder: "hamilton",
+    assetFolder: "hamilton-current-20260801-r1",
+    count: 90,
+    season: "autumn",
+    index: "02",
+    name: "Hamilton Beach",
+    date: "September 27",
+    location: "Van Wagner’s Beach · Hamilton",
+    mood: "Sand & shoreline",
+    description: "Soft sand, windswept grasses and open water create a luminous, relaxed setting with room for everyone to move and play.",
+    duration: "30 minutes",
+    imagesIncluded: "30 images",
+    price: "$385 + HST",
+    url: "https://katienicollephotography.pixieset.com/booking/hamilton-beach"
+  },
+  {
     id: "tree-farm",
     folder: "tree",
     assetFolder: "tree-current-20260801-r2",
     count: 43,
     season: "holiday",
-    index: "02",
+    index: "03",
     name: "Tree Farm",
     date: "October 18",
     location: "Hepburn Christmas Trees · Waterdown",
@@ -44,7 +61,7 @@ const sessions = [
     folder: "beamers",
     count: 48,
     season: "autumn",
-    index: "03",
+    index: "04",
     name: "Beamers Falls",
     date: "October 24",
     location: "Beamers Falls · Grimsby",
@@ -60,7 +77,7 @@ const sessions = [
     folder: "dundurn",
     count: 42,
     season: "autumn",
-    index: "04",
+    index: "05",
     name: "Dundurn Castle",
     date: "October 25",
     location: "Dundurn Castle · Hamilton",
@@ -76,7 +93,7 @@ const sessions = [
     folder: "village",
     count: 35,
     season: "holiday",
-    index: "05",
+    index: "06",
     name: "Village Co",
     date: "November 15",
     location: "The Village Co · Jordan Village",
@@ -114,7 +131,7 @@ function sessionCard(session) {
     <article class="session-card reveal" id="${session.id}" data-season="${session.season}" data-session="${session.id}">
       <div class="session-gallery" aria-label="${session.name} photo gallery">
         <div class="gallery-slides">${slides}</div>
-        <div class="gallery-topline"><span>${session.mood}</span><span><i>Complete </i>${session.photos.length}<i>-frame preview</i> · ${session.index} / 05</span></div>
+        <div class="gallery-topline"><span>${session.mood}</span><span><i>Complete </i>${session.photos.length}<i>-frame preview</i> · ${session.index} / 06</span></div>
         <button class="gallery-arrow gallery-prev" type="button" data-direction="-1" aria-label="Previous ${session.name} photo">←</button>
         <button class="gallery-arrow gallery-next" type="button" data-direction="1" aria-label="Next ${session.name} photo">→</button>
         <div class="gallery-status">

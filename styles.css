@@ -127,7 +127,7 @@ figure, p, h1, h2, h3, dl, dd, blockquote { margin: 0; }
 .section-heading h2 { font: 300 clamp(48px, 5.1vw, 82px)/.95 var(--serif); letter-spacing: -.035em; }
 .section-heading h2 em { font-size: clamp(50px, 5.2vw, 88px); margin-left: 4vw; }
 .section-heading > p:last-child { max-width: 320px; color: var(--muted); font: 300 16px/1.8 var(--serif); }
-.session-compass { width: var(--page); margin: 0 auto 58px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.session-compass { width: var(--page); margin: 0 auto 58px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
 .session-compass a { position: relative; min-height: 240px; padding: 22px 20px; display: grid; grid-template-columns: 1fr auto; align-content: end; overflow: hidden; isolation: isolate; color: white; background: #c9c0b8; box-shadow: 0 13px 35px rgba(65,55,48,.07); }
 .session-compass a::after { position: absolute; z-index: -1; content: ""; inset: 0; background: linear-gradient(180deg, rgba(35,32,29,.02) 28%, rgba(35,32,29,.66)); transition: background .45s; }
 .session-compass img { position: absolute; z-index: -2; inset: 0; transition: transform 1.1s cubic-bezier(.2,.7,.3,1), filter .55s; }
@@ -288,7 +288,7 @@ footer > small { grid-column: 2; grid-row: 2; justify-self: end; color: #77746f;
   .hero-note { left: 0; }
   .section-heading { grid-template-columns: .55fr 1.25fr; }
   .section-heading > p:last-child { display: none; }
-  .session-compass { grid-template-columns: repeat(5, 210px); overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .session-compass { grid-template-columns: repeat(6, 210px); overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x mandatory; scrollbar-width: none; }
   .session-compass a { scroll-snap-align: start; }
   .session-card, .session-card:nth-child(even) { grid-template-columns: 1.08fr .92fr; }
   .session-card:nth-child(even) .session-gallery { order: initial; }
@@ -340,7 +340,7 @@ footer > small { grid-column: 2; grid-row: 2; justify-self: end; color: #77746f;
   .section-heading { display: block; margin-bottom: 36px; }
   .section-heading h2 { margin-top: 20px; font-size: 49px; line-height: .94; }
   .section-heading h2 em { margin: 9px 0 0 22px; font-size: 49px; }
-  .session-compass { width: 100%; grid-template-columns: repeat(5, 58vw); gap: 8px; margin: 0 0 34px; padding: 0 16px 10px; }
+  .session-compass { width: 100%; grid-template-columns: repeat(6, 58vw); gap: 8px; margin: 0 0 34px; padding: 0 16px 10px; }
   .session-compass a { min-height: 235px; padding: 18px 16px; }
   .session-compass strong { font-size: 27px; }
   .availability-note { margin: 0 auto 28px; padding: 19px 3px; display: block; }
