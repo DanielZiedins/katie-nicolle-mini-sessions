@@ -90,8 +90,10 @@ figure, p, h1, h2, h3, dl, dd, blockquote { margin: 0; }
 .hero-image-small img { animation-delay: -7s; animation-duration: 19s; }
 @keyframes heroDrift { from { transform: scale(1.015) translate3d(0,0,0); } to { transform: scale(1.09) translate3d(-1.5%,1%,0); } }
 .hero-image-main { top: 3%; right: 4%; width: min(64%, 570px); height: 76%; }
+.hero-image-main img { object-position: center 54%; }
 .hero-image-main::after { position: absolute; content: ""; inset: 0; box-shadow: inset 0 0 100px rgba(50,45,40,.05); }
 .hero-image-small { left: 2%; bottom: 5%; width: min(35%, 280px); height: 35%; border: 12px solid var(--paper); box-shadow: 0 25px 70px rgba(63,56,50,.12); }
+.hero-image-small img { object-position: center 48%; }
 .hero-note { position: absolute; left: 5%; top: 16%; z-index: 2; color: #7f756c; transform: rotate(-6deg); }
 .hero-note span { position: absolute; top: -19px; left: -16px; font: 40px var(--script); }
 .hero-note strong { display: block; font: 300 clamp(34px, 3.1vw, 58px)/1 var(--serif); white-space: nowrap; }
@@ -111,15 +113,15 @@ figure, p, h1, h2, h3, dl, dd, blockquote { margin: 0; }
 .filmstrip-heading h2 { font: 300 clamp(48px, 5vw, 78px)/.9 var(--serif); letter-spacing: -.04em; }
 .filmstrip-heading h2 em { color: #988579; font: 400 clamp(51px, 5.2vw, 82px)/.7 var(--script); }
 .filmstrip-heading > p:last-child { color: var(--muted); font: 300 15px/1.7 var(--serif); }
-.filmstrip-window { width: 100%; overflow: hidden; }
-.filmstrip-track { display: flex; width: max-content; gap: 18px; padding-left: 18px; animation: filmstripMove 54s linear infinite; will-change: transform; }
+.filmstrip-window { width: 100%; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 2.5%, #000 97.5%, transparent); mask-image: linear-gradient(90deg, transparent, #000 2.5%, #000 97.5%, transparent); }
+.filmstrip-track { display: flex; width: max-content; gap: 18px; padding-left: 18px; animation: filmstripMove 54s linear infinite; transform: translate3d(0,0,0); backface-visibility: hidden; will-change: transform; }
 .filmstrip-track:hover { animation-play-state: paused; }
 .filmstrip figure { position: relative; flex: 0 0 clamp(220px, 20vw, 340px); height: clamp(325px, 31vw, 500px); overflow: hidden; background: #ded6cf; }
 .filmstrip figure:nth-child(3n + 2) { transform: translateY(22px); }
 .filmstrip figure img { transition: transform 1.2s cubic-bezier(.2,.7,.3,1), filter .7s; }
 .filmstrip figure:hover img { transform: scale(1.045); filter: saturate(1.04); }
 .filmstrip-note { width: var(--page); margin: 48px auto 0; color: #958c84; text-align: right; font-size: 8px; text-transform: uppercase; letter-spacing: .22em; }
-@keyframes filmstripMove { to { transform: translateX(calc(-50% - 9px)); } }
+@keyframes filmstripMove { to { transform: translate3d(-50%,0,0); } }
 
 .sessions-section { padding: 150px 0 170px; }
 .section-heading { width: var(--page); margin: 0 auto 68px; display: grid; grid-template-columns: 1fr 1.2fr .8fr; align-items: end; column-gap: 50px; }
@@ -332,7 +334,8 @@ footer > small { grid-column: 2; grid-row: 2; justify-self: end; color: #77746f;
   .filmstrip-heading h2 { margin-top: 17px; font-size: 47px; }
   .filmstrip-heading h2 em { font-size: 50px; }
   .filmstrip-heading > p:last-child { margin-top: 23px; max-width: 300px; }
-  .filmstrip-track { gap: 11px; padding-left: 11px; animation-duration: 42s; }
+  .filmstrip-window { -webkit-mask-image: linear-gradient(90deg, transparent, #000 9px, #000 calc(100% - 9px), transparent); mask-image: linear-gradient(90deg, transparent, #000 9px, #000 calc(100% - 9px), transparent); }
+  .filmstrip-track { gap: 11px; padding-left: 11px; animation-duration: 42s; touch-action: pan-y; }
   .filmstrip figure { flex-basis: 62vw; height: 92vw; }
   .filmstrip figure:nth-child(3n + 2) { transform: translateY(12px); }
   .filmstrip-note { margin-top: 35px; text-align: left; line-height: 1.7; }
@@ -408,6 +411,11 @@ footer > small { grid-column: 2; grid-row: 2; justify-self: end; color: #77746f;
   .lightbox-arrow { top: auto; bottom: 25px; }
   .lightbox-prev { left: calc(50% - 58px); }
   .lightbox-next { right: calc(50% - 58px); }
+}
+
+@media (hover: none) {
+  .filmstrip-track:hover { animation-play-state: running; }
+  .filmstrip-track { pointer-events: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
