@@ -141,7 +141,9 @@ figure, p, h1, h2, h3, dl, dd, blockquote { margin: 0; }
 .availability-note { width: var(--page); margin: -14px auto 38px; padding: 21px 25px; display: grid; grid-template-columns: 155px 1fr; align-items: center; gap: 28px; border-top: 1px solid #ddd5ce; border-bottom: 1px solid #ddd5ce; }
 .availability-note span { color: #887b70; font: 34px/1 var(--script); transform: rotate(-2deg); }
 .availability-note p { max-width: 760px; color: #77736e; font: 300 14px/1.7 var(--serif); }
-.season-tabs { width: var(--page); margin: 0 auto 45px; display: flex; justify-content: flex-end; gap: 4px; }
+.session-toolbar { width: var(--page); margin: 0 auto 45px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 18px; }
+.session-status { flex: 1 1 260px; min-width: 0; color: #8a847d; font-size: 9px; font-weight: 600; line-height: 1.7; text-transform: uppercase; letter-spacing: .18em; }
+.season-tabs { flex: 0 0 auto; display: flex; justify-content: flex-end; gap: 4px; }
 .season-tab { border: 0; background: transparent; padding: 8px 13px; cursor: pointer; color: #908b84; font-size: 9px; text-transform: uppercase; letter-spacing: .16em; border-bottom: 1px solid transparent; }
 .season-tab.is-active { color: var(--ink); border-bottom-color: var(--ink); }
 .session-list { width: var(--page); margin: 0 auto; display: grid; gap: 110px; }
@@ -181,6 +183,12 @@ figure, p, h1, h2, h3, dl, dd, blockquote { margin: 0; }
 .session-date { position: absolute; top: 58px; right: 55px; width: 76px; height: 76px; display: grid; place-content: center; border: 1px solid #d8d1ca; border-radius: 50%; text-align: center; color: #8d8177; }
 .session-date span { font-size: 7px; text-transform: uppercase; letter-spacing: .2em; }
 .session-date strong { font: 300 25px/1 var(--serif); }
+.session-flag { margin-bottom: 13px; color: #9a8f84; font-size: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: .22em; }
+.is-past .session-date { border-style: dashed; border-color: #e0dad4; color: #b2aaa2; }
+.is-past .session-gallery { filter: saturate(.72); opacity: .82; transition: filter .5s, opacity .5s; }
+.is-past:hover .session-gallery, .is-past:focus-within .session-gallery { filter: none; opacity: 1; }
+.session-compass a.is-past img { filter: grayscale(.55); }
+.session-compass a.is-past small { opacity: .75; }
 .session-title-wrap { padding-top: 62px; }
 .session-title-wrap .eyebrow { max-width: 70%; line-height: 1.7; }
 .session-title-wrap h3 { margin-top: 18px; font: 300 clamp(48px, 4vw, 68px)/.9 var(--serif); letter-spacing: -.035em; }
@@ -349,8 +357,11 @@ footer > small { grid-column: 2; grid-row: 2; justify-self: end; color: #77746f;
   .availability-note { margin: 0 auto 28px; padding: 19px 3px; display: block; }
   .availability-note span { display: block; margin-bottom: 10px; font-size: 32px; }
   .availability-note p { font-size: 14px; }
-  .season-tabs { justify-content: flex-start; overflow-x: auto; margin-bottom: 24px; padding-bottom: 5px; scrollbar-width: none; }
+  .session-toolbar { display: block; margin-bottom: 24px; }
+  .session-status { margin-bottom: 10px; font-size: 8px; letter-spacing: .14em; }
+  .season-tabs { justify-content: flex-start; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
   .season-tab { white-space: nowrap; padding: 8px 10px; }
+  .season-tab:first-child { padding-left: 0; }
   .session-list { gap: 58px; }
   .session-card, .session-card:nth-child(even) { display: flex; flex-direction: column; min-height: 0; }
   .session-gallery { min-height: 0; height: min(128vw, 570px); }

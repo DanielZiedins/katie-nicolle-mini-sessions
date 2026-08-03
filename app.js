@@ -4,16 +4,18 @@ const imageRange = (folder, count) => Array.from(
 );
 
 const GALLERY_INTERVAL = 1500;
+const ZONE = "America/Toronto";
 
-const sessions = [
+// Dates live here as ISO strings only — every label, the running order and the
+// 01–06 numbering are derived from them, so changing a date is a one-line edit.
+const sessionSource = [
   {
     id: "flower-farm",
     folder: "flower",
     count: 82,
     season: "summer",
-    index: "01",
     name: "Flower Farm",
-    date: "August 31",
+    date: "2026-08-31",
     location: "All Who Wander Flower Farm · Dundas",
     mood: "Wildflowers & golden light",
     description: "A dreamy garden setting filled with soft colour, long grasses and effortless summer warmth.",
@@ -28,9 +30,8 @@ const sessions = [
     assetFolder: "hamilton-current-20260801-r1",
     count: 90,
     season: "summer",
-    index: "02",
     name: "Hamilton Beach",
-    date: "August 30",
+    date: "2026-08-30",
     location: "Van Wagner’s Beach · Hamilton",
     mood: "Sand & shoreline",
     description: "Soft sand, windswept grasses and open water create a luminous, relaxed setting with room for everyone to move and play.",
@@ -45,9 +46,8 @@ const sessions = [
     assetFolder: "tree-current-20260801-r2",
     count: 43,
     season: "holiday",
-    index: "03",
     name: "Tree Farm",
-    date: "October 18",
+    date: "2026-10-18",
     location: "Hepburn Christmas Trees · Waterdown",
     mood: "Evergreens & quiet wonder",
     description: "Fresh air, open rows of evergreens and a nostalgic holiday feeling—natural, unfussy and full of heart.",
@@ -61,9 +61,8 @@ const sessions = [
     folder: "beamers",
     count: 48,
     season: "autumn",
-    index: "04",
     name: "Beamers Falls",
-    date: "October 24",
+    date: "2026-10-24",
     location: "Beamers Falls · Grimsby",
     mood: "Golden fields & forest paths",
     description: "A luminous fall setting with a wide-open field, a pathway into the forest and layers of colourful leaves.",
@@ -77,9 +76,8 @@ const sessions = [
     folder: "dundurn",
     count: 42,
     season: "autumn",
-    index: "05",
     name: "Dundurn Castle",
-    date: "October 25",
+    date: "2026-10-25",
     location: "Dundurn Castle · Hamilton",
     mood: "Architecture & autumn",
     description: "Timeless stone, elegant lines and glowing fall colour for a polished gallery with plenty of playfulness.",
@@ -93,9 +91,8 @@ const sessions = [
     folder: "village",
     count: 35,
     season: "holiday",
-    index: "06",
     name: "Village Co",
-    date: "November 15",
+    date: "2026-11-15",
     location: "The Village Co · Jordan Village",
     mood: "Cozy & beautifully styled",
     description: "A warm indoor studio with refined holiday details—the perfect weather-proof setting for little ones.",
@@ -104,8 +101,29 @@ const sessions = [
     price: "$300 + HST",
     url: "https://katienicollephotography.pixieset.com/booking/village-co"
   }
-].map(session => ({
+];
+
+const today = new Date().toLocaleDateString("en-CA", { timeZone: ZONE });
+const dateParts = (iso, options) => new Date(`${iso}T12:00:00Z`).toLocaleDateString("en-US", { timeZone: "UTC", ...options });
+
+// Upcoming dates first, in date order; anything already past drops to the end so
+// the page still reads correctly once the earliest sessions have come and gone.
+const orderedSessions = sessionSource
+  .map(session => ({
+    ...session,
+    isPast: session.date < today,
+    dateLabel: dateParts(session.date, { month: "long", day: "numeric" }),
+    weekday: dateParts(session.date, { weekday: "long" }),
+    shortDate: dateParts(session.date, { month: "short", day: "numeric" }),
+    shortWeekday: dateParts(session.date, { weekday: "short" })
+  }))
+  .sort((a, b) => (a.isPast - b.isPast) || a.date.localeCompare(b.date));
+
+const sessionTotal = String(orderedSessions.length).padStart(2, "0");
+
+const sessions = orderedSessions.map((session, position) => ({
   ...session,
+  index: String(position + 1).padStart(2, "0"),
   photos: imageRange(session.assetFolder || session.folder, session.count),
   alts: Array.from(
     { length: session.count },
@@ -114,6 +132,17 @@ const sessions = [
 }));
 
 const sessionList = document.querySelector("[data-session-list]");
+const sessionCompass = document.querySelector(".session-compass");
+
+// The markup in index.html is the no-JS fallback; this keeps the compass in step
+// with the running order above.
+sessionCompass.innerHTML = sessions.map(session => `
+    <a href="#${session.id}"${session.isPast ? ' class="is-past"' : ""}>
+      <img src="/images/drive-sm/${session.assetFolder || session.folder}/001.jpg" alt="" loading="lazy" decoding="async" />
+      <span>${session.index}</span>
+      <strong>${session.name}</strong>
+      <small>${session.isPast ? "Date passed" : `${session.shortWeekday} · ${session.shortDate}`}</small>
+    </a>`).join("");
 
 function sessionCard(session) {
   const slides = session.photos.map((photo, index) => {
@@ -128,10 +157,10 @@ function sessionCard(session) {
   }).join("");
 
   return `
-    <article class="session-card reveal" id="${session.id}" data-season="${session.season}" data-session="${session.id}">
+    <article class="session-card reveal${session.isPast ? " is-past" : ""}" id="${session.id}" data-season="${session.season}" data-session="${session.id}">
       <div class="session-gallery" aria-label="${session.name} photo gallery">
         <div class="gallery-slides">${slides}</div>
-        <div class="gallery-topline"><span>${session.mood}</span><span><i>Complete </i>${session.photos.length}<i>-frame preview</i> · ${session.index} / 06</span></div>
+        <div class="gallery-topline"><span>${session.mood}</span><span><i>Complete </i>${session.photos.length}<i>-frame preview</i> · ${session.index} / ${sessionTotal}</span></div>
         <button class="gallery-arrow gallery-prev" type="button" data-direction="-1" aria-label="Previous ${session.name} photo">←</button>
         <button class="gallery-arrow gallery-next" type="button" data-direction="1" aria-label="Next ${session.name} photo">→</button>
         <div class="gallery-status">
@@ -141,8 +170,9 @@ function sessionCard(session) {
         <div class="gallery-progress" aria-hidden="true"><i></i></div>
       </div>
       <div class="session-copy">
-        <div class="session-date"><span>${session.date.split(" ")[0]}</span><strong>${session.date.split(" ")[1]}</strong></div>
+        <time class="session-date" datetime="${session.date}"><span>${session.dateLabel.split(" ")[0]}</span><strong>${session.dateLabel.split(" ")[1]}</strong><i class="sr-only">${session.weekday}</i></time>
         <div class="session-title-wrap">
+          ${session.isPast ? '<p class="session-flag">This date has passed</p>' : ""}
           <p class="eyebrow">Mini session · ${session.location}</p>
           <h3>${session.name}</h3>
           <p class="session-description">${session.description}</p>
@@ -314,21 +344,42 @@ document.addEventListener("visibilitychange", () => {
 });
 
 const filterButtons = [...document.querySelectorAll("[data-filter]")];
-filterButtons.forEach(button => {
-  button.addEventListener("click", () => {
-    const filter = button.dataset.filter;
-    filterButtons.forEach(item => {
-      const active = item === button;
-      item.classList.toggle("is-active", active);
-      item.setAttribute("aria-pressed", String(active));
-    });
-    galleries.forEach(({ card, start, stop }) => {
-      const visible = filter === "all" || card.dataset.season === filter;
-      card.hidden = !visible;
-      if (visible) start(); else stop();
-    });
+const sessionStatus = document.querySelector("[data-session-status]");
+const nextSession = sessions.find(session => !session.isPast);
+
+function describeSelection(filter, shown) {
+  if (filter !== "all") {
+    const label = filterButtons.find(button => button.dataset.filter === filter)?.textContent.toLowerCase();
+    return `Showing ${shown} of ${sessions.length} ${label} ${shown === 1 ? "setting" : "settings"}`;
+  }
+  if (!nextSession) return "Every date in this collection has passed";
+  return `Next date · ${nextSession.name} · ${nextSession.weekday}, ${nextSession.dateLabel}`;
+}
+
+function applyFilter(filter) {
+  filterButtons.forEach(button => {
+    const active = button.dataset.filter === filter;
+    button.classList.toggle("is-active", active);
+    button.setAttribute("aria-pressed", String(active));
   });
+  let shown = 0;
+  galleries.forEach(({ card, start, stop }) => {
+    const visible = filter === "all" || card.dataset.season === filter;
+    card.hidden = !visible;
+    if (visible) {
+      shown += 1;
+      start();
+    } else {
+      stop();
+    }
+  });
+  sessionStatus.textContent = describeSelection(filter, shown);
+}
+
+filterButtons.forEach(button => {
+  button.addEventListener("click", () => applyFilter(button.dataset.filter));
 });
+sessionStatus.textContent = describeSelection("all", sessions.length);
 
 const toast = document.querySelector("[data-toast]");
 let toastTimer;
@@ -344,7 +395,7 @@ document.querySelectorAll("[data-share-session]").forEach(button => {
     const session = sessions.find(item => item.id === button.dataset.shareSession);
     const shareData = {
       title: `${session.name} Mini Session | Katie Nicolle Photography`,
-      text: `Come see the ${session.name} mini session on ${session.date}.`,
+      text: `Come see the ${session.name} mini session on ${session.weekday}, ${session.dateLabel}.`,
       url: `${window.location.origin}${window.location.pathname}#${session.id}`
     };
     try {
@@ -367,15 +418,23 @@ const conciergeDate = concierge.querySelector("[data-concierge-date]");
 const conciergeLink = concierge.querySelector("[data-concierge-link]");
 const compassLinks = [...document.querySelectorAll(".session-compass a")];
 
+// Jumping to a session that the active season filter has hidden used to land
+// nowhere — clear the filter first so the card is there to scroll to.
+compassLinks.forEach(link => link.addEventListener("click", () => {
+  if (document.getElementById(link.getAttribute("href").slice(1))?.hidden) applyFilter("all");
+}));
+
 function setActiveSession(id) {
   const session = sessions.find(item => item.id === id);
   if (!session) return;
   conciergeName.textContent = session.name;
-  conciergeDate.textContent = session.date;
+  conciergeDate.textContent = session.isPast ? "Date passed" : `${session.shortWeekday} · ${session.dateLabel}`;
   conciergeLink.href = session.url;
   conciergeLink.setAttribute("aria-label", `Book the ${session.name} mini session on Pixieset`);
   compassLinks.forEach(link => link.classList.toggle("is-active", link.getAttribute("href") === `#${id}`));
 }
+
+if (nextSession) setActiveSession(nextSession.id);
 
 const activeSessionObserver = new IntersectionObserver(entries => {
   const active = entries.filter(entry => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
