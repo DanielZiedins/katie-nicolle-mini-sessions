@@ -27,8 +27,8 @@ const sessionSource = [
   {
     id: "hamilton-beach",
     folder: "hamilton",
-    assetFolder: "hamilton-current-20260801-r1",
-    count: 90,
+    assetFolder: "hamilton-current-20260807-r2",
+    count: 50,
     season: "autumn",
     name: "Hamilton Beach",
     date: "2026-10-03",
